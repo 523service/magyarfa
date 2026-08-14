@@ -1,0 +1,29 @@
+{
+    "name": "filament-demo",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "@alpinejs/focus": "^3.10.3",
+        "@tailwindcss/forms": "^0.5.2",
+        "@tailwindcss/vite": "^4.1.11",
+        "alpinejs": "^3.4.2",
+        "autoprefixer": "^10.4.2",
+        "axios": "^1.13.2",
+        "laravel-vite-plugin": "^1.0.0",
+        "postcss": "^8.4.31",
+        "postcss-nesting": "^12.0.1",
+        "tailwindcss": "^3.1.0",
+        "tippy.js": "^6.3.7",
+        "vite": "^5.0.0"
+    },
+    "dependencies": {
+        "@algolia/autocomplete-js": "^1.19.6",
+        "@algolia/autocomplete-theme-classic": "^1.19.6",
+        "algoliasearch": "^5.49.1",
+        "instantsearch.js": "^4.90.0"
+    }
+}

@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Filter Modal Grid Playground</title>
+  <style>
+    :root{
+      --bg: #0b1220;
+      --panel: #0f1a2e;
+      --panel-2:#121f37;
+      --text:#e8eefc;
+      --muted:#9fb0d0;
+      --border: rgba(255,255,255,.10);
+      --border-2: rgba(255,255,255,.14);
+      --shadow: 0 24px 64px rgba(0,0,0,.55);
+      --focus: 0 0 0 3px rgba(82,154,255,.35);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --pad: 16px;
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 20% 0%, #182a52 0%, var(--bg) 55%);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .demo-shell{
+      width: min(1000px, 100%);
+      display: grid;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .demo-top{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.03);
+    }
+
+    .btn{
+      appearance: none;
+      border: 1px solid var(--border-2);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform .08s ease, background .15s ease, border-color .15s ease;
+    }
+    .btn:hover{ background: rgba(255,255,255,.10); }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      background: rgba(82,154,255,.18);
+      border-color: rgba(82,154,255,.35);
+    }
+    .btn.primary:hover{ background: rgba(82,154,255,.26); }
+
+    .pill{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .pill strong{ color: var(--text); font-weight: 700; }
+
+    /* Backdrop + Modal */
+    .backdrop{
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .backdrop.open{ display: flex; }
+
+    .modal{
+      width: min(800px, 100%);
+      max-height: min(78vh, 760px);
+      background: linear-gradient(180deg, var(--panel) 0%, var(--panel-2) 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .modal-header{
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      padding: var(--pad);
+      border-bottom: 1px solid var(--border);
+      background: rgba(15,26,46,.85);
+      backdrop-filter: blur(10px);
+      display: grid;
+      gap: 12px;
+    }
+
+    .modal-title-row{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .modal-title{
+      display: grid;
+      gap: 2px;
+    }
+    .modal-title h2{
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: .2px;
+    }
+    .modal-title p{
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .icon-btn{
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      border: 1px solid var(--border-2);
+      background: rgba(255,255,255,.06);
+      cursor: pointer;
+    }
+    .icon-btn:hover{ background: rgba(255,255,255,.10); }
+    .icon-btn:focus{ outline: none; box-shadow: var(--focus); }
+
+    /* Search + quick actions */
+    .toolbar{
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+    }
+    .search svg{ flex: 0 0 auto; opacity: .9; }
+    .search input{
+      width: 100%;
+      border: 0;
+      outline: none;
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+    }
+    .search input::placeholder{ color: rgba(159,176,208,.75); }
+
+    .link-btn{
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+    .link-btn:hover{ background: rgba(255,255,255,.06); }
+
+    /* Content (scrollable) */
+    .modal-body{
+      overflow: auto;
+      padding: var(--pad);
+    }
+
+    /* GRID of options */
+    .filter-options{
+      display: grid;
+      gap: 10px;
+      /* responsive grid, UX-friendly: consistent min card size */
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (min-width: 720px){
+      .filter-options{
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 980px){
+      /* will only apply if modal can grow enough, but modal max is 800px,
+         still ok if embedded somewhere wider in the future */
+      .filter-options{
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    /* Option card */
+    .filter-option{
+      position: relative;
+      display: grid;
+      grid-template-columns: 22px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      cursor: pointer;
+      user-select: none;
+      transition: background .15s ease, border-color .15s ease, transform .08s ease;
+      min-height: 46px;
+    }
+    .filter-option:hover{
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.18);
+    }
+    .filter-option:active{ transform: translateY(1px); }
+
+    .filter-checkbox{
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .filter-checkbox-custom{
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,.22);
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.04);
+      color: transparent;
+      transition: background .12s ease, border-color .12s ease, color .12s ease;
+    }
+    .filter-checkbox-icon{ display: block; }
+
+    .filter-option-label{
+      font-weight: 650;
+      font-size: 14px;
+      letter-spacing: .1px;
+    }
+
+    .filter-option-count{
+      font-variant-numeric: tabular-nums;
+      font-size: 12px;
+      color: var(--muted);
+      padding: 4px 8px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255,255,255,.03);
+    }
+
+    /* checked state: style the whole card */
+    .filter-option.checked{
+      border-color: rgba(82,154,255,.45);
+      background: rgba(82,154,255,.12);
+    }
+    .filter-option.checked .filter-checkbox-custom{
+      border-color: rgba(82,154,255,.65);
+      background: rgba(82,154,255,.22);
+      color: var(--text);
+    }
+
+    /* Focus ring for keyboard users: when checkbox receives focus */
+    .filter-checkbox:focus + .filter-checkbox-custom{
+      box-shadow: var(--focus);
+      outline: none;
+    }
+
+    /* Footer */
+    .modal-footer{
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
+      padding: var(--pad);
+      border-top: 1px solid var(--border);
+      background: rgba(15,26,46,.85);
+      backdrop-filter: blur(10px);
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .footer-left{
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .footer-left strong{ color: var(--text); }
+    .footer-actions{
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* Tablet-friendly: toolbar collapses nicely */
+    @media (max-width: 520px){
+      .toolbar{
+        grid-template-columns: 1fr;
+      }
+      .footer-actions{
+        width: 100%;
+      }
+      .footer-actions .btn{
+        flex: 1;
+      }
+    }
+
+    .sr-only{
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-shell">
+    <div class="demo-top">
+      <div class="pill">
+        Active selections: <strong id="activeCountPill">0</strong>
+      </div>
+      <button class="btn primary" id="openModalBtn">Open filter modal</button>
+    </div>
+
+    <div class="pill" style="justify-content:space-between; gap:14px;">
+      <span>
+        Tip: Try search “1”, “2”, “cm” – also resize window to see 2→3 columns.
+      </span>
+      <span style="color:var(--muted); font-size:13px;">Max modal width: 800px</span>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="backdrop" id="backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <div class="modal-title-row">
+          <div class="modal-title">
+            <h2 id="modalTitle">Filter: Size</h2>
+            <p>Pick one or more options. Use search for faster selection.</p>
+          </div>
+          <button class="icon-btn" id="closeBtn" aria-label="Close modal">
+            <!-- X -->
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+              <path d="M4 4L14 14M14 4L4 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="toolbar">
+          <label class="search" aria-label="Search options">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <input id="searchInput" type="search" placeholder="Search… (e.g. 10 cm)" autocomplete="off" />
+          </label>
+
+          <button class="link-btn" id="selectAllBtn" type="button">Select all</button>
+          <button class="link-btn" id="clearBtn" type="button">Clear</button>
+        </div>
+      </div>
+
+      <div class="modal-body" id="modalBody">
+        <!-- Your existing structure; only .filter-options becomes a grid via CSS -->
+        <div class="filter-section-content" style="height:auto;">
+          <div class="filter-options" id="optionsGrid">
+            <!-- options injected by JS to keep this playground compact -->
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="footer-left">
+          Selected: <strong id="activeCount">0</strong>
+          <span id="visibleCountText">• Showing <strong id="visibleCount">0</strong></span>
+        </div>
+        <div class="footer-actions">
+          <button class="btn" id="resetBtn" type="button">Reset</button>
+          <button class="btn primary" id="applyBtn" type="button">Apply</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Demo data = your options
+    const OPTIONS = [
+      { value: 20, label: "1 cm", count: 1 },
+      { value: 21, label: "2 cm", count: 1 },
+      { value: 22, label: "3 cm", count: 1 },
+      { value: 23, label: "4 cm", count: 1 },
+      { value: 24, label: "5 cm", count: 1 },
+      { value: 25, label: "6 cm", count: 1 },
+      { value: 27, label: "8 cm", count: 1 },
+      { value: 29, label: "10 cm", count: 1 },
+      { value: 30, label: "12 cm", count: 1 },
+      { value: 31, label: "14 cm", count: 1 },
+      { value: 32, label: "15 cm", count: 1 },
+      { value: 33, label: "16 cm", count: 1 },
+      { value: 38, label: "18 cm", count: 1 },
+      { value: 34, label: "20 cm", count: 1 },
+      { value: 39, label: "22 cm", count: 1 }
+    ];
+
+    const backdrop = document.getElementById("backdrop");
+    const openBtn = document.getElementById("openModalBtn");
+    const closeBtn = document.getElementById("closeBtn");
+    const applyBtn = document.getElementById("applyBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const clearBtn = document.getElementById("clearBtn");
+    const selectAllBtn = document.getElementById("selectAllBtn");
+    const searchInput = document.getElementById("searchInput");
+    const grid = document.getElementById("optionsGrid");
+
+    const activeCountEl = document.getElementById("activeCount");
+    const activeCountPill = document.getElementById("activeCountPill");
+    const visibleCountEl = document.getElementById("visibleCount");
+
+    let selected = new Set();       // stores selected option values
+    let lastFocused = null;
+
+    function optionTemplate(opt){
+      // mirrors your markup, but adds a checked class and data-label for filtering
+      const label = document.createElement("label");
+      label.className = "filter-option";
+      label.dataset.label = opt.label.toLowerCase();
+
+      label.innerHTML = `
+        <input class="filter-checkbox" type="checkbox" name="attributes[10][]" value="${opt.value}">
+        <span class="filter-checkbox-custom" aria-hidden="true">
+          <svg class="filter-checkbox-icon" width="10" height="8" viewBox="0 0 10 8" fill="none">
+            <path d="M1 4L3.5 6.5L9 1" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter"></path>
+          </svg>
+        </span>
+        <span class="filter-option-label">${opt.label}</span>
+        <span class="filter-option-count">${opt.count}</span>
+      `;
+
+      const checkbox = label.querySelector("input");
+
+      checkbox.addEventListener("change", () => {
+        const v = Number(checkbox.value);
+        if (checkbox.checked) selected.add(v); else selected.delete(v);
+        syncCheckedUI(label, checkbox.checked);
+        syncCounts();
+      });
+
+      // Make the whole card toggle, but keep checkbox semantics
+      label.addEventListener("click", (e) => {
+        // clicking inside the label already toggles checkbox; prevent double toggles
+        if (e.target.tagName.toLowerCase() === "input") return;
+      });
+
+      return label;
+    }
+
+    function syncCheckedUI(labelEl, isChecked){
+      labelEl.classList.toggle("checked", isChecked);
+    }
+
+    function render(){
+      grid.innerHTML = "";
+      OPTIONS.forEach(opt => grid.appendChild(optionTemplate(opt)));
+      syncCounts();
+      syncFilter(); // apply current search
+    }
+
+    function syncCounts(){
+      const count = selected.size;
+      activeCountEl.textContent = String(count);
+      activeCountPill.textContent = String(count);
+    }
+
+    function syncFilter(){
+      const q = searchInput.value.trim().toLowerCase();
+      let visible = 0;
+
+      grid.querySelectorAll(".filter-option").forEach(label => {
+        const match = !q || label.dataset.label.includes(q);
+        label.style.display = match ? "" : "none";
+        if (match) visible++;
+      });
+
+      visibleCountEl.textContent = String(visible);
+      selectAllBtn.textContent = (visible > 0 && areAllVisibleSelected()) ? "Unselect all" : "Select all";
+    }
+
+    function areAllVisibleSelected(){
+      const visibleLabels = [...grid.querySelectorAll(".filter-option")]
+        .filter(l => l.style.display !== "none");
+      if (!visibleLabels.length) return false;
+
+      return visibleLabels.every(l => {
+        const cb = l.querySelector("input");
+        return cb.checked;
+      });
+    }
+
+    function selectAllVisible(toggleOffIfAllSelected = true){
+      const visibleLabels = [...grid.querySelectorAll(".filter-option")]
+        .filter(l => l.style.display !== "none");
+
+      if (!visibleLabels.length) return;
+
+      const allSelected = areAllVisibleSelected();
+      const shouldCheck = toggleOffIfAllSelected ? !allSelected : true;
+
+      visibleLabels.forEach(label => {
+        const cb = label.querySelector("input");
+        cb.checked = shouldCheck;
+        const v = Number(cb.value);
+        if (shouldCheck) selected.add(v); else selected.delete(v);
+        syncCheckedUI(label, shouldCheck);
+      });
+
+      syncCounts();
+      syncFilter();
+    }
+
+    function clearAll(){
+      selected.clear();
+      grid.querySelectorAll(".filter-option").forEach(label => {
+        const cb = label.querySelector("input");
+        cb.checked = false;
+        syncCheckedUI(label, false);
+      });
+      syncCounts();
+      syncFilter();
+    }
+
+    function openModal(){
+      lastFocused = document.activeElement;
+      backdrop.classList.add("open");
+      backdrop.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      // focus search for quick entry
+      setTimeout(() => searchInput.focus(), 0);
+    }
+
+    function closeModal(){
+      backdrop.classList.remove("open");
+      backdrop.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      if (lastFocused) lastFocused.focus();
+    }
+
+    // Event wiring
+    openBtn.addEventListener("click", openModal);
+    closeBtn.addEventListener("click", closeModal);
+
+    // click outside closes
+    backdrop.addEventListener("click", (e) => {
+      if (e.target === backdrop) closeModal();
+    });
+
+    // ESC closes
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && backdrop.classList.contains("open")) closeModal();
+    });
+
+    searchInput.addEventListener("input", syncFilter);
+
+    selectAllBtn.addEventListener("click", () => selectAllVisible(true));
+    clearBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      syncFilter();
+      clearAll();
+    });
+
+    resetBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      clearAll();
+    });
+
+    applyBtn.addEventListener("click", () => {
+      // In real app: submit / sync Alpine state here
+      console.log("Selected values:", [...selected.values()].sort((a,b)=>a-b));
+      closeModal();
+    });
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(frontend-design)",
+      "Bash(vendor/bin/pint:*)",
+      "mcp__plugin_context7_context7__query-docs",
+      "Bash(php artisan make:livewire:*)",
+      "Bash(php artisan test:*)",
+      "Bash(php artisan tinker:*)",
+      "Bash(./vendor/bin/pint:*)",
+      "Bash(php artisan:*)",
+      "Bash(xargs grep *)",
+      "Bash(grep -E \"^[^/]*Clusters/Products\\\\.php|^[^/]*Clusters/[^/]*\\\\.php$\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\laragon\\\\www\\\\szigeteles\\\\app\\\\Filament\\\\Clusters\\\\Products\\\\Resources\" -Recurse)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Read(//mnt/c/laragon/www/szigeteles/storage/**)",
+      "PowerShell(New-Item *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\laragon\\\\www\\\\szigeteles\" -Directory -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object -ExpandProperty Name)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "laravel-boost"
+  ]
+}
