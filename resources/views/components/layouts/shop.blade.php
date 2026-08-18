@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $title ?? 'MagyarSzigetelés.hu - Hőszigetelés webshop' }}</title>
+    <title>{{ $title ?? 'Magyar Fa - Faanyag kereskedés Csömör' }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700|barlow-condensed:600,700,800" rel="stylesheet" />
 
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/css/shop.css', 'resources/js/app.js'])
@@ -24,7 +24,7 @@
 
     @include('partials.shop.header')
 
-    <main class="container mx-auto max-w-[1200px] px-4">
+    <main class="container mx-auto max-w-[1280px] px-4">
         {{ $slot }}
     </main>
 

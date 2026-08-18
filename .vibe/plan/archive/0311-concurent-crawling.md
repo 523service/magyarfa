@@ -219,7 +219,7 @@ Cél: időzített, skálázható futtatás.
     - Kezeli a hibákat (retry / mark broken)
 
 3. Scheduler:
-    - `app/Console/Kernel.php`-ben:
+    - `../../../app/Console/Kernel.php`-ben:
         - pl. `->hourly()` vagy `->twiceDaily()`
 
 ### 7.2. Teendő Claude felé

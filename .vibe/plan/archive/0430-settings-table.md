@@ -2,7 +2,7 @@
 
 ## Context
 
-A `config/shop.php` jelenleg tartalmazza a nyitvatartást, szállítási díjakat és figyelmeztetéseket. Ezeket kiszervezzük egy Filament admin Settings Page-re, ahol az adminisztrátor DB-ből módosíthatja őket kódírás nélkül. A `spatie/laravel-settings` (v3.5.0) és a `filament/spatie-laravel-settings-plugin` (v4.2.0) **már telepítve van**, a `settings` tábla **már létezik**. Csak a beállítási osztályokat és az admin oldalt kell létrehozni.
+A `../../../config/shop.php` jelenleg tartalmazza a nyitvatartást, szállítási díjakat és figyelmeztetéseket. Ezeket kiszervezzük egy Filament admin Settings Page-re, ahol az adminisztrátor DB-ből módosíthatja őket kódírás nélkül. A `spatie/laravel-settings` (v3.5.0) és a `filament/spatie-laravel-settings-plugin` (v4.2.0) **már telepítve van**, a `settings` tábla **már létezik**. Csak a beállítási osztályokat és az admin oldalt kell létrehozni.
 
 ---
 
@@ -13,11 +13,11 @@ A `config/shop.php` jelenleg tartalmazza a nyitvatartást, szállítási díjaka
 | `app/Settings/ShopSettings.php` | **ÚJ** — Spatie typed settings osztály |
 | `database/settings/2026_xx_xx_create_shop_settings.php` | **ÚJ** — kezdőértékek migrációja |
 | `app/Filament/Pages/ManageShopSettings.php` | **ÚJ** — Filament SettingsPage |
-| `app/Providers/Filament/AdminPanelProvider.php` | plugin + nav group regisztrálás |
-| `app/Services/ShippingService.php` | `config()` → `ShopSettings` injektálás |
-| `resources/views/partials/shop/header.blade.php` | `config('shop.opening_hours')` → `ShopSettings` |
-| `tests/Feature/ShippingServiceTest.php` | `Config::set()` → `ShopSettings::fake()` |
-| `config/shop.php` | takarítás (áthelyezett értékek kivétele) |
+| `../../../app/Providers/Filament/AdminPanelProvider.php` | plugin + nav group regisztrálás |
+| `../../../app/Services/ShippingService.php` | `config()` → `ShopSettings` injektálás |
+| `../../../resources/views/partials/shop/header.blade.php` | `config('shop.opening_hours')` → `ShopSettings` |
+| `../../../tests/Feature/ShippingServiceTest.php` | `Config::set()` → `ShopSettings::fake()` |
+| `../../../config/shop.php` | takarítás (áthelyezett értékek kivétele) |
 
 ---
 
@@ -74,7 +74,7 @@ class ShopSettings extends Settings
 php artisan make:settings-migration CreateShopSettings
 ```
 
-Feltölti a jelenlegi `config/shop.php` értékeit alapértékként:
+Feltölti a jelenlegi `../../../config/shop.php` értékeit alapértékként:
 - `store_email`: pl. `'info@szigeteles.hu'`
 - `store_phone`: pl. `'+36 1 234 5678'`
 - `store_address`: pl. `'1234 Budapest, Példa u. 1.'`
@@ -207,7 +207,7 @@ A fájl maradhat üres stubként vagy törölhető teljesen.
 
 ### 10. Caching (opcionális, ajánlott)
 
-`.env` fájlba:
+`../../../.env` fájlba:
 ```
 SETTINGS_CACHE_ENABLED=true
 ```

@@ -1,23 +1,27 @@
 @if($featuredCategories->isNotEmpty())
-<div class="subcategories">
-    <div class="subcategories-grid">
+<section class="mfa-section">
+    <h2 class="mfa-section-title">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2 3 9l9 5 9-5-9-7Z"/><path d="m3 14 9 5 9-5"/></svg>
+        <span>Termékkategóriák</span>
+    </h2>
+
+    <div class="mfa-categories">
         @foreach($featuredCategories as $category)
-            <a href="{{ route('category.show', $category->slug) }}" class="subcategory-card">
-                <div class="subcategory-icon">
-                    @if(!empty($category->meta['icon_path']))
-                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                            <path d="{{ $category->meta['icon_path'] }}" stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
-                    @else
-                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                            <path d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" stroke-linecap="round" stroke-linejoin="round"></path>
-                        </svg>
+            @php $imageUrl = $category->getFirstMediaUrl(); @endphp
+            <a href="{{ route('category.show', $category->slug) }}" class="mfa-category-card">
+                <div class="mfa-category-media" @unless($imageUrl) style="background: var(--mfa-placeholder-gradient-{{ $loop->iteration % 3 === 0 ? 3 : $loop->iteration % 3 }})" @endunless>
+                    @if($imageUrl)
+                        <img src="{{ $imageUrl }}" alt="{{ $category->name }}" loading="lazy">
                     @endif
                 </div>
-                <span class="subcategory-name">{{ $category->meta['featured_label'] ?? $category->name }}</span>
-                <span class="subcategory-count">{{ $category->products_count }} termék</span>
+                <div class="mfa-category-overlay"></div>
+                <div class="mfa-category-body">
+                    <h3>{{ $category->meta['featured_label'] ?? $category->name }}</h3>
+                    <p>{{ $category->description ?? '' }}</p>
+                    <span class="mfa-category-cta">Megnézem →</span>
+                </div>
             </a>
         @endforeach
     </div>
-</div>
+</section>
 @endif

@@ -11,15 +11,15 @@ A látogatók könnyen tudják jelezni a hibákat/problémákat az oldalon. A go
 | Kérdés | Válasz |
 |--------|--------|
 | Melyik layoutokon jelenik meg | shop + shop-auth (minden látogatói oldal) |
-| Email értesítő | Igen, `feedback_email` → `config/shop.php` |
-| Filament hely | Önálló: `app/Filament/Resources/Feedbacks/` |
+| Email értesítő | Igen, `feedback_email` → `../../../config/shop.php` |
+| Filament hely | Önálló: `../../../app/Filament/Resources/Feedbacks` |
 | Screenshot | DB-ben `screenshot TEXT nullable` előkészítve; UI-ban disabled placeholder gomb |
 
 ---
 
 ## Lépések
 
-### 1. FeedbackStatus Enum — `app/Enums/FeedbackStatus.php`
+### 1. FeedbackStatus Enum — `../../../app/Enums/FeedbackStatus.php`
 ```php
 enum FeedbackStatus: string implements HasColor, HasIcon, HasLabel
 {
@@ -53,7 +53,7 @@ Oszlopok:
 
 ---
 
-### 3. Feedback Model — `app/Models/Feedback.php`
+### 3. Feedback Model — `../../../app/Models/Feedback.php`
 ```php
 php artisan make:model Feedback --factory
 ```
@@ -64,7 +64,7 @@ php artisan make:model Feedback --factory
 
 ---
 
-### 4. Config módosítás — `config/shop.php`
+### 4. Config módosítás — `../../../config/shop.php`
 Hozzáadás:
 ```php
 'feedback_email' => env('FEEDBACK_EMAIL', env('STORE_EMAIL', '')),
@@ -72,7 +72,7 @@ Hozzáadás:
 
 ---
 
-### 5. Notification — `app/Notifications/NewFeedbackNotification.php`
+### 5. Notification — `../../../app/Notifications/NewFeedbackNotification.php`
 ```
 php artisan make:notification NewFeedbackNotification
 ```
@@ -82,7 +82,7 @@ php artisan make:notification NewFeedbackNotification
 
 ---
 
-### 6. Livewire Komponens — `app/Livewire/FeedbackButton.php`
+### 6. Livewire Komponens — `../../../app/Livewire/FeedbackButton.php`
 ```
 php artisan make:livewire FeedbackButton
 ```
@@ -110,7 +110,7 @@ public int $screenHeight = 0;
 - Notification küldés (try/catch)
 - Modal bezárás + success üzenet (Livewire dispatch + Alpine x-show)
 
-**Blade view** (`resources/views/livewire/feedback-button.blade.php`):
+**Blade view** (`../../../resources/views/livewire/feedback-button.blade.php`):
 
 ```
 <div>
@@ -141,12 +141,12 @@ public int $screenHeight = 0;
 
 ### 7. Layout integráció
 
-**`resources/views/components/layouts/shop.blade.php`** — a `@livewireScripts` elé:
+**`../../../resources/views/components/layouts/shop.blade.php`** — a `@livewireScripts` elé:
 ```blade
 <livewire:feedback-button />
 ```
 
-**`resources/views/components/layouts/shop-auth.blade.php`** — szintén a `@livewireScripts` elé.
+**`../../../resources/views/components/layouts/shop-auth.blade.php`** — szintén a `@livewireScripts` elé.
 
 ---
 
@@ -211,26 +211,26 @@ SelectFilter::make('status')->options(FeedbackStatus::class)
 
 | Új fájl | Megjegyzés |
 |---------|------------|
-| `app/Enums/FeedbackStatus.php` | Enum HasColor/HasIcon/HasLabel |
+| `../../../app/Enums/FeedbackStatus.php` | Enum HasColor/HasIcon/HasLabel |
 | `database/migrations/..._create_feedbacks_table.php` | Migration |
-| `app/Models/Feedback.php` | Eloquent model + factory |
-| `database/factories/FeedbackFactory.php` | Factory |
-| `config/shop.php` | +feedback_email sor |
-| `app/Notifications/NewFeedbackNotification.php` | Email értesítő |
-| `app/Livewire/FeedbackButton.php` | Livewire komponens |
-| `resources/views/livewire/feedback-button.blade.php` | Blade view |
-| `app/Filament/Resources/Feedbacks/FeedbackResource.php` | Filament resource |
-| `app/Filament/Resources/Feedbacks/Pages/ListFeedbacks.php` | |
-| `app/Filament/Resources/Feedbacks/Pages/ViewFeedback.php` | |
-| `app/Filament/Resources/Feedbacks/Schemas/FeedbackForm.php` | |
-| `app/Filament/Resources/Feedbacks/Tables/FeedbacksTable.php` | |
+| `../../../app/Models/Feedback.php` | Eloquent model + factory |
+| `../../../database/factories/FeedbackFactory.php` | Factory |
+| `../../../config/shop.php` | +feedback_email sor |
+| `../../../app/Notifications/NewFeedbackNotification.php` | Email értesítő |
+| `../../../app/Livewire/FeedbackButton.php` | Livewire komponens |
+| `../../../resources/views/livewire/feedback-button.blade.php` | Blade view |
+| `../../../app/Filament/Resources/Feedbacks/FeedbackResource.php` | Filament resource |
+| `../../../app/Filament/Resources/Feedbacks/Pages/ListFeedbacks.php` | |
+| `../../../app/Filament/Resources/Feedbacks/Pages/ViewFeedback.php` | |
+| `../../../app/Filament/Resources/Feedbacks/Schemas/FeedbackForm.php` | |
+| `../../../app/Filament/Resources/Feedbacks/Tables/FeedbacksTable.php` | |
 | `tests/Feature/Livewire/FeedbackButtonTest.php` | |
 | `tests/Feature/Filament/FeedbackResourceTest.php` | |
 
 **Módosított fájlok:**
-- `resources/views/components/layouts/shop.blade.php`
-- `resources/views/components/layouts/shop-auth.blade.php`
-- `config/shop.php`
+- `../../../resources/views/components/layouts/shop.blade.php`
+- `../../../resources/views/components/layouts/shop-auth.blade.php`
+- `../../../config/shop.php`
 
 ---
 

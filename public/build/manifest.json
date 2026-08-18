@@ -1,11 +1,11 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-CPkJs7LQ.css",
+    "file": "assets/app-u-GQURsS.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/shop.css": {
-    "file": "assets/shop-BNyNyZcT.css",
+    "file": "assets/shop-DmgVD0H3.css",
     "src": "resources/css/shop.css",
     "isEntry": true
   },
@@ -16,7 +16,7 @@
     "isEntry": true
   },
   "resources/js/search-results.js": {
-    "file": "assets/search-results-BENINqYd.js",
+    "file": "assets/search-results-DUZj3uLw.js",
     "name": "search-results",
     "src": "resources/js/search-results.js",
     "isEntry": true

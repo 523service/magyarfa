@@ -249,7 +249,7 @@ Benefits:
 
 Create a dedicated service class:
 
-`app/Services/Pricing/ProductPriceCalculator.php`
+`../../../app/Services/Pricing/ProductPriceCalculator.php`
 
 Required public methods:
 

@@ -13,13 +13,13 @@ composer require prism-php/prism
 php artisan vendor:publish --tag=prism-config
 ```
 
-A `config/prism.php`-ben és `.env`-ben kerülnek az API kulcsok:
+A `../../../config/prism.php`-ben és `../../../.env`-ben kerülnek az API kulcsok:
 - `ANTHROPIC_API_KEY`
 - `OPENAI_API_KEY`
 
 ---
 
-## 2. Config — `config/ai.php` (új fájl)
+## 2. Config — `../../../config/ai.php` (új fájl)
 
 ```php
 return [
@@ -35,7 +35,7 @@ return [
 
 ---
 
-## 3. Service — `app/Services/AI/ProductDescriptionService.php` (új)
+## 3. Service — `../../../app/Services/AI/ProductDescriptionService.php` (új)
 
 Felelőssége:
 - Product adataiból prompt összeállítás (name, brand, categories, attributes)
@@ -78,7 +78,7 @@ Az AI-tól JSON-t kérünk vissza:
 
 ---
 
-## 4. Job — `app/Jobs/GenerateProductDescriptionJob.php` (új)
+## 4. Job — `../../../app/Jobs/GenerateProductDescriptionJob.php` (új)
 
 ```php
 class GenerateProductDescriptionJob implements ShouldQueue
@@ -172,19 +172,19 @@ BulkAction::make('generateDescriptions')
 
 | Fájl | Változás |
 |------|----------|
-| `composer.json` | `prism-php/prism` csomag hozzáadás |
-| `config/prism.php` | Vendor publish után létrejön |
-| `config/ai.php` | **Új** — provider defaults, bulk_mode, system_prompt, models |
-| `.env` / `.env.example` | `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `AI_DEFAULT_PROVIDER`, `AI_BULK_MODE` |
-| `app/Services/AI/ProductDescriptionService.php` | **Új** |
-| `app/Jobs/GenerateProductDescriptionJob.php` | **Új** |
-| `app/Filament/Clusters/Products/Resources/Products/Tables/ProductsTable.php` | Row + bulk akció hozzáadás |
+| `../../../composer.json` | `prism-php/prism` csomag hozzáadás |
+| `../../../config/prism.php` | Vendor publish után létrejön |
+| `../../../config/ai.php` | **Új** — provider defaults, bulk_mode, system_prompt, models |
+| `../../../.env` / `../../../.env.example` | `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `AI_DEFAULT_PROVIDER`, `AI_BULK_MODE` |
+| `../../../app/Services/AI/ProductDescriptionService.php` | **Új** |
+| `../../../app/Jobs/GenerateProductDescriptionJob.php` | **Új** |
+| `../../../app/Filament/Clusters/Products/Resources/Products/Tables/ProductsTable.php` | Row + bulk akció hozzáadás |
 
 ---
 
 ## 7. Tesztelés
 
-1. `tests/Feature/AI/ProductDescriptionServiceTest.php` — Prism fake-et használva:
+1. `../../../tests/Feature/AI/ProductDescriptionServiceTest.php` — Prism fake-et használva:
    - Happy path: generate() visszatér description + seo_description párral
    - Üres product adatok esetén is generál
    - Provider selection helyes modellt hív
@@ -202,8 +202,8 @@ BulkAction::make('generateDescriptions')
 ## Végrehajtás sorrendje
 
 1. `composer require prism-php/prism` + vendor:publish
-2. `config/ai.php` létrehozása
-3. `.env.example` frissítés
+2. `../../../config/ai.php` létrehozása
+3. `../../../.env.example` frissítés
 4. `ProductDescriptionService` megírás
 5. Tesztek írása (service szint)
 6. `GenerateProductDescriptionJob` megírás

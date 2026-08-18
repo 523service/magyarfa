@@ -20,6 +20,10 @@ class ShopController extends Controller
         $query = Product::with(['brand', 'categories', 'materialBasePrice', 'priceComponents.materialBasePrice', 'attributeValues.attribute', 'attributeValues.options'])
             ->where('is_visible', true);
 
+        if ($search = trim((string) request('q', ''))) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+
         match ($sort) {
             'price_asc' => $query->orderBy('price', 'asc'),
             'price_desc' => $query->orderBy('price', 'desc'),
@@ -43,17 +47,17 @@ class ShopController extends Controller
         $productCount = $products->total();
 
         $homepageProducts = Product::homepage()
-            ->with(['brand', 'categories'])
+            ->with(['brand', 'categories', 'units'])
             ->take(6)
             ->get();
 
         $featuredProducts = Product::featured()
-            ->with(['brand', 'categories'])
+            ->with(['brand', 'categories', 'units'])
             ->take(6)
             ->get();
 
         $saleProducts = Product::onSale()
-            ->with(['brand', 'categories'])
+            ->with(['brand', 'categories', 'units'])
             ->take(8)
             ->get();
 

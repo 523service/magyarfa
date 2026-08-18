@@ -8,13 +8,13 @@ The shop already has `laravel/scout` + `algolia/algoliasearch-client-php` instal
 ## Prerequisites (manual step — user must do first)
 1. Go to Algolia Dashboard → **API Keys**
 2. Copy the **Search-Only API Key** (read-only, NOT the Admin key)
-3. Add to `.env`:
+3. Add to `../../../.env`:
 ```
 ALGOLIA_SEARCH_KEY=your_search_only_key
 VITE_ALGOLIA_APP_ID="${ALGOLIA_APP_ID}"
 VITE_ALGOLIA_SEARCH_KEY="${ALGOLIA_SEARCH_KEY}"
 ```
-Also add the same (with empty values) to `.env.example`.
+Also add the same (with empty values) to `../../../.env.example`.
 
 > The `VITE_` prefix exposes values to browser JS via `import.meta.env`. The Admin key (`ALGOLIA_SECRET`) is **never** `VITE_`-prefixed.
 
@@ -27,7 +27,7 @@ npm install algoliasearch @algolia/autocomplete-js @algolia/autocomplete-theme-c
 
 ---
 
-## Step 2 — `config/scout.php` — Index settings
+## Step 2 — `../../../config/scout.php` — Index settings
 Add inside `'index-settings'` array (lines 118-123):
 ```php
 'shop_products' => [
@@ -55,7 +55,7 @@ Add inside `'index-settings'` array (lines 118-123):
 
 ---
 
-## Step 3 — `app/Models/Shop/Product.php` — Customize Scout indexing
+## Step 3 — `../../../app/Models/Shop/Product.php` — Customize Scout indexing
 Add three methods (prevent N+1 by eager loading in `makeAllSearchableUsing`):
 
 ```php
@@ -95,7 +95,7 @@ public function toSearchableArray(): array
 
 ---
 
-## Step 4 — `app/Models/Shop/Category.php` — Add Searchable
+## Step 4 — `../../../app/Models/Shop/Category.php` — Add Searchable
 Add `use Laravel\Scout\Searchable;` import and the trait. Category already has `InteractsWithMedia`.
 
 ```php
@@ -133,7 +133,7 @@ public function toSearchableArray(): array
 
 ---
 
-## Step 5 — `vite.config.js` — Add new entry points
+## Step 5 — `../../../vite.config.js` — Add new entry points
 ```js
 input: [
     'resources/css/app.css',
@@ -146,7 +146,7 @@ input: [
 
 ---
 
-## Step 6 — `resources/views/partials/shop/header.blade.php`
+## Step 6 — `../../../resources/views/partials/shop/header.blade.php`
 Add `#autocomplete-container` div between logo and `.header-meta`. The layout already has `@stack('scripts')` so just push from here:
 
 ```blade
@@ -259,13 +259,13 @@ autocomplete({
 
 ## Step 8 — Route + Controller for `/kereses`
 
-**`routes/web.php`** — add:
+**`../../../routes/web.php`** — add:
 ```php
 use App\Http\Controllers\SearchController;
 Route::get('/kereses', [SearchController::class, 'index'])->name('search.index');
 ```
 
-**`app/Http/Controllers/SearchController.php`** (new, created via `php artisan make:controller SearchController --no-interaction`):
+**`../../../app/Http/Controllers/SearchController.php`** (new, created via `php artisan make:controller SearchController --no-interaction`):
 ```php
 public function index(): \Illuminate\View\View
 {
@@ -278,7 +278,7 @@ Controller is minimal — all search logic is client-side in instantsearch.js.
 
 ---
 
-## Step 9 — `resources/views/shop/search.blade.php` (new file)
+## Step 9 — `../../../resources/views/shop/search.blade.php` (new file)
 Shell view with containers for instantsearch.js widgets:
 
 ```blade
@@ -310,7 +310,7 @@ Shell view with containers for instantsearch.js widgets:
 
 ---
 
-## Step 10 — `resources/js/search-results.js` (new file)
+## Step 10 — `../../../resources/js/search-results.js` (new file)
 Full instantsearch.js page: SearchBox, Hits (product cards matching existing `.product-card` styles), Stats, RefinementList for brands + categories, Pagination. `routing: true` syncs state to URL (back button works, shareable links).
 
 ```js
@@ -388,7 +388,7 @@ search.start();
 
 ---
 
-## Step 11 — `resources/css/shop.css` — Add search styles
+## Step 11 — `../../../resources/css/shop.css` — Add search styles
 Append to end of file. Key additions:
 - `.header-search` — flex: 1, max-width 480px, for the search container in header
 - Override `@algolia/autocomplete-theme-classic` variables to use shop CSS tokens (`--accent`, `--border-subtle`, etc.)
@@ -416,17 +416,17 @@ npm run build
 ## Step 13 — Tests
 Create via `php artisan make:test Feature/ProductSearchableTest --phpunit --no-interaction`:
 
-**`tests/Feature/ProductSearchableTest.php`**:
+**`../../../tests/Feature/ProductSearchableTest.php`**:
 - `toSearchableArray_returns_expected_keys` — create Product with Brand + Category + media, assert all keys present and brand_name/category_names correct
 - `toSearchableArray_includes_formatted_price` — assert price_formatted format matches `X Ft`
 - `invisible_product_is_not_searchable` — `is_visible=false` → `shouldBeSearchable()` returns false
 - `make_all_searchable_using_eager_loads_relationships` — verify query count is 1 (not N+1) for 3 products with brands/categories
 
-**`tests/Feature/CategorySearchableTest.php`**:
+**`../../../tests/Feature/CategorySearchableTest.php`**:
 - `to_searchable_array_returns_correct_keys` — visible category, assert objectID/name/slug/url present
 - `invisible_category_is_not_searchable` — `is_visible=false` → `shouldBeSearchable()` returns false
 
-**`tests/Feature/SearchControllerTest.php`**:
+**`../../../tests/Feature/SearchControllerTest.php`**:
 - `search_page_returns_200` — `GET /kereses` asserts 200
 - `search_page_passes_query_to_view` — `GET /kereses?q=test` asserts view receives `query === 'test'`
 
@@ -438,18 +438,18 @@ Run: `php artisan test tests/Feature/ProductSearchableTest.php tests/Feature/Cat
 
 | Action | Path |
 |--------|------|
-| Modify | `app/Models/Shop/Product.php` |
-| Modify | `app/Models/Shop/Category.php` |
-| Modify | `config/scout.php` |
-| Modify | `vite.config.js` |
-| Modify | `resources/views/partials/shop/header.blade.php` |
-| Modify | `resources/css/shop.css` |
-| Modify | `routes/web.php` |
-| Modify | `.env` + `.env.example` |
-| Create | `app/Http/Controllers/SearchController.php` |
+| Modify | `../../../app/Models/Shop/Product.php` |
+| Modify | `../../../app/Models/Shop/Category.php` |
+| Modify | `../../../config/scout.php` |
+| Modify | `../../../vite.config.js` |
+| Modify | `../../../resources/views/partials/shop/header.blade.php` |
+| Modify | `../../../resources/css/shop.css` |
+| Modify | `../../../routes/web.php` |
+| Modify | `../../../.env` + `../../../.env.example` |
+| Create | `../../../app/Http/Controllers/SearchController.php` |
 | Create | `resources/js/search-autocomplete.js` |
-| Create | `resources/js/search-results.js` |
-| Create | `resources/views/shop/search.blade.php` |
-| Create | `tests/Feature/ProductSearchableTest.php` |
-| Create | `tests/Feature/CategorySearchableTest.php` |
-| Create | `tests/Feature/SearchControllerTest.php` |
+| Create | `../../../resources/js/search-results.js` |
+| Create | `../../../resources/views/shop/search.blade.php` |
+| Create | `../../../tests/Feature/ProductSearchableTest.php` |
+| Create | `../../../tests/Feature/CategorySearchableTest.php` |
+| Create | `../../../tests/Feature/SearchControllerTest.php` |

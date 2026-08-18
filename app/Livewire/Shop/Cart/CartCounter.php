@@ -12,6 +12,8 @@ class CartCounter extends Component
 
     public float $total = 0;
 
+    public bool $compact = false;
+
     public function mount(CartService $cartService): void
     {
         $this->refreshCart($cartService);

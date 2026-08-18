@@ -39,6 +39,11 @@ class CategoryController extends Controller
             ->with(['brand', 'categories', 'attributeValues.attribute', 'attributeValues.options', 'materialBasePrice', 'priceComponents.materialBasePrice'])
             ->where('is_visible', true);
 
+        // Apply quick name search (toolbar search input)
+        if ($search = trim((string) request('q', ''))) {
+            $productsQuery->where('name', 'like', '%' . $search . '%');
+        }
+
         // Apply brand filter
         if (! empty($selectedBrands)) {
             $productsQuery->whereIn('shop_brand_id', $selectedBrands);

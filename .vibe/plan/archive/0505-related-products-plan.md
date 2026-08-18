@@ -44,7 +44,7 @@ Backed string enum, `HasLabel` implementációval:
 
 ## 3. Product model — új relationship-ek
 
-**Fájl:** `app/Models/Shop/Product.php`
+**Fájl:** `../../../app/Models/Shop/Product.php`
 
 ```php
 // Összes kapcsolódó termék (pivot type-pal)
@@ -71,7 +71,7 @@ public function substitutes(): BelongsToMany
 
 ## 4. Filament Admin — ProductForm frissítés
 
-**Fájl:** `app/Filament/Clusters/Products/Resources/Products/Schemas/ProductForm.php`
+**Fájl:** `../../../app/Filament/Clusters/Products/Resources/Products/Schemas/ProductForm.php`
 
 Új "Kapcsolódó termékek" section az Associations section után:
 
@@ -100,7 +100,7 @@ Section::make('Kapcsolódó termékek')
 
 ## 5. ProductController — `getRelatedProducts()` frissítés
 
-**Fájl:** `app/Http/Controllers/ProductController.php`
+**Fájl:** `../../../app/Http/Controllers/ProductController.php`
 
 Logika:
 1. Betölti a `accessories` és `substitutes` relationship-eket a termékre
@@ -116,7 +116,7 @@ A `show()` metódus az alábbi adatokat adja át a view-nak:
 
 ## 6. Frontend — Termék oldal
 
-**Fájl:** `resources/views/shop/product.blade.php`
+**Fájl:** `../../../resources/views/shop/product.blade.php`
 
 Jelenlegi "Kapcsolódó termékek" szekció bővítése:
 
@@ -135,7 +135,7 @@ Ha mindkettő üres ($relatedProducts->isNotEmpty()):
 
 ## 7. Kosár modal — `loadUpsellProducts()` frissítés
 
-**Fájlok:** `app/Livewire/Shop/Cart/CartModal.php`, nézet: `cart-modal.blade.php`
+**Fájlok:** `../../../app/Livewire/Shop/Cart/CartModal.php`, nézet: `cart-modal.blade.php`
 
 Frissített logika:
 1. Az épp kosárba tett termék (`$this->productId`) accessories-eit tölti be
@@ -175,10 +175,10 @@ Logika:
 - `tests/Feature/RelatedProductsTest.php`
 
 ### Módosított fájlok
-- `app/Models/Shop/Product.php`
-- `app/Filament/Clusters/Products/Resources/Products/Schemas/ProductForm.php`
-- `app/Http/Controllers/ProductController.php`
-- `resources/views/shop/product.blade.php`
-- `app/Livewire/Shop/Cart/CartModal.php`
-- `resources/views/livewire/shop/cart/cart-modal.blade.php`
+- `../../../app/Models/Shop/Product.php`
+- `../../../app/Filament/Clusters/Products/Resources/Products/Schemas/ProductForm.php`
+- `../../../app/Http/Controllers/ProductController.php`
+- `../../../resources/views/shop/product.blade.php`
+- `../../../app/Livewire/Shop/Cart/CartModal.php`
+- `../../../resources/views/livewire/shop/cart/cart-modal.blade.php`
 - Kosár Livewire component + nézet (kosár oldal)

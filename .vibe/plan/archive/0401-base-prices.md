@@ -107,7 +107,7 @@ A `quantity` mindig az adott `MaterialBasePrice.unit_label` egységében értend
 
 ## 4. lépés — `PriceResolverService`
 
-`app/Services/PriceResolverService.php`
+`../../../app/Services/PriceResolverService.php`
 
 ```php
 public function resolve(Product $product): float

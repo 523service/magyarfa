@@ -57,14 +57,14 @@ composer require symfony/dom-crawler symfony/css-selector
 
 ## 3. Models
 
-### `app/Models/Shop/CompetitorLink.php`
+### `../../../app/Models/Shop/CompetitorLink.php`
 - Table: `shop_competitor_links`
 - Fillable: `product_id`, `url`, `competitor_name`, `scraped_price`, `scraped_sale_price`, `scraped_image_url`, `scraped_description`, `last_scraped_at`, `scrape_status`, `scrape_error`
 - Casts: `scraped_price` → decimal:2, `scraped_sale_price` → decimal:2, `last_scraped_at` → datetime, `scrape_status` → enum cast
 - Relationship: `product()` → BelongsTo Product
 - Boot: auto-derive `competitor_name` from URL domain on creating
 
-### Update `app/Models/Shop/Product.php`
+### Update `../../../app/Models/Shop/Product.php`
 - Add `manufacturer_website` to fillable/casts
 - Add `competitorLinks()` → hasMany(CompetitorLink::class)
 
@@ -72,10 +72,10 @@ composer require symfony/dom-crawler symfony/css-selector
 
 ## 4. Scraping Services
 
-### `app/Services/Scraping/ScrapedData.php` (DTO)
+### `../../../app/Services/Scraping/ScrapedData.php` (DTO)
 Simple readonly class / plain object with: `price`, `salePrice`, `imageUrl`, `description`
 
-### `app/Services/Scraping/CompetitorScraperInterface.php`
+### `../../../app/Services/Scraping/CompetitorScraperInterface.php`
 ```php
 interface CompetitorScraperInterface {
     public function supports(string $url): bool;
@@ -83,7 +83,7 @@ interface CompetitorScraperInterface {
 }
 ```
 
-### `app/Services/Scraping/Scrapers/HoszigetelorendszerScraper.php`
+### `../../../app/Services/Scraping/Scrapers/HoszigetelorendszerScraper.php`
 - `supports()`: checks if domain is `hoszigetelorendszer.com`
 - `scrape()`:
   - HTTP GET with Laravel Http facade (User-Agent header, timeout 30s)
@@ -92,7 +92,7 @@ interface CompetitorScraperInterface {
   - CSS selectors determined by inspecting the target site
   - Returns `ScrapedData`
 
-### `app/Services/Scraping/CompetitorLinkScraperService.php`
+### `../../../app/Services/Scraping/CompetitorLinkScraperService.php`
 - Accepts array of `CompetitorScraperInterface` implementations (injected via service container)
 - `scrape(CompetitorLink $link): void`
   - Finds matching scraper by `supports()`
@@ -105,7 +105,7 @@ interface CompetitorScraperInterface {
 
 ## 5. Queue Job
 
-### `app/Jobs/ScrapeCompetitorLinkJob.php`
+### `../../../app/Jobs/ScrapeCompetitorLinkJob.php`
 - Implements `ShouldQueue`
 - Constructor: accepts `CompetitorLink $link` (model binding)
 - `handle(CompetitorLinkScraperService $service)`: calls `$service->scrape($this->link)`
@@ -118,7 +118,7 @@ interface CompetitorScraperInterface {
 
 ## 6. Artisan Command
 
-### `app/Console/Commands/ScrapeCompetitorPrices.php`
+### `../../../app/Console/Commands/ScrapeCompetitorPrices.php`
 Signature: `scrape:competitor-prices {--product= : Product ID or slug} {--delay=5 : Seconds between jobs}`
 
 Logic:
@@ -131,7 +131,7 @@ Logic:
 
 ## 7. Cron Schedule
 
-### `app/Console/Kernel.php` → `schedule()` method
+### `../../../app/Console/Kernel.php` → `schedule()` method
 ```php
 $schedule->command('scrape:competitor-prices')->dailyAt('02:00');
 ```
@@ -140,25 +140,25 @@ $schedule->command('scrape:competitor-prices')->dailyAt('02:00');
 
 ## 8. Queue Config
 
-Update `.env`:
+Update `../../../.env`:
 ```
 QUEUE_CONNECTION=database
 ```
 
-Update `.env.example` the same way.
+Update `../../../.env.example` the same way.
 
 ---
 
 ## 9. Filament Admin
 
 ### 9a. Add `manufacturer_website` to ProductForm
-In `app/Filament/Clusters/Products/Resources/Products/Schemas/ProductForm.php`:
+In `../../../app/Filament/Clusters/Products/Resources/Products/Schemas/ProductForm.php`:
 - Add a `TextInput::make('manufacturer_website')` field with URL validation
 - Place it in the Basic Info section below `slug`, or after `description`
 - Label: "Gyártó weboldala", placeholder: "https://..."
 
 ### 9b. RelationManager
-File: `app/Filament/Clusters/Products/Resources/Products/RelationManagers/CompetitorLinksRelationManager.php`
+File: `../../../app/Filament/Clusters/Products/Resources/Products/RelationManagers/CompetitorLinksRelationManager.php`
 
 **Table columns:**
 - `competitor_name` — badge
@@ -210,8 +210,8 @@ $this->app->bind(CompetitorLinkScraperService::class, function ($app) {
 ---
 
 ## 11. Tests
-- `tests/Feature/ScrapeCompetitorLinkJobTest.php` — mock HTTP response, assert model fields updated
-- `tests/Unit/HoszigetelorendszerScraperTest.php` — fixture HTML → assert correct price/description extraction
+- `../../../tests/Feature/ScrapeCompetitorLinkJobTest.php` — mock HTTP response, assert model fields updated
+- `../../../tests/Unit/HoszigetelorendszerScraperTest.php` — fixture HTML → assert correct price/description extraction
 - `tests/Feature/CompetitorLinksRelationManagerTest.php` — Filament table/form interaction
 
 ---
